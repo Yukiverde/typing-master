@@ -3,544 +3,177 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Typing Buddy</title>
+<title>Typing Buddy - Instruction Mode</title>
 <link rel="icon" href="assets/logo.png">
 <style>
-  :root{
-    --bg:#FFFBF2;
-    --card:#FFF7E6;
-    --accent:#7CC7E1;
-    --accent-dark:#5FB0C0;
-    --soft:#FDEBD9;
-    --text:#264653;
-    --muted:#6C757D;
-    --success:#88D498;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    background:linear-gradient(180deg,var(--bg),#FFF);
-    color:var(--text);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
-    padding:20px;
-  }
-  .app{
-    width:980px;
-    max-width:100%;
-    background:var(--card);
-    border-radius:18px;
-    box-shadow:0 8px 30px rgba(20,30,40,0.12);
-    padding:20px;
-  }
-  header{
-    display:flex;
-    align-items:center;
-    gap:16px;
-  }
-  header img{
-    width:64px;
-    height:64px;
-    border-radius:12px;
-  }
-  h1{
-    margin:0;
-    font-size:20px;
-  }
-  .top-row{
-    display:flex;
-    gap:12px;
-    margin-top:14px;
-    align-items:center;
-  }
-  .btn{
-    background:var(--accent);
-    color:white;
-    border:none;
-    padding:10px 14px;
-    border-radius:12px;
-    cursor:pointer;
-    font-weight:600;
-    box-shadow:0 6px 14px rgba(124,199,225,0.28);
-  }
-  .btn.secondary{
-    background:transparent;
-    border:1px solid rgba(38,70,83,0.08);
-    color:var(--text);
-    box-shadow:none;
-  }
-  .controls{
-    margin-left:auto;
-    display:flex;
-    gap:8px;
-    align-items:center;
-  }
-  .card{
-    margin-top:18px;
-    background:linear-gradient(180deg,#FFFFFF, #FFF9F0);
-    border-radius:14px;
-    padding:18px;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);
-  }
-  .modes{
-    display:flex;
-    gap:10px;
-  }
-  .mode-btn{
-    padding:8px 12px;
-    border-radius:10px;
-    border:none;
-    cursor:pointer;
-    background:transparent;
-  }
-  .mode-btn.active{
-    background:var(--accent-dark);
-    color:white;
-  }
-  .row{
-    display:flex;
-    gap:12px;
-    align-items:center;
-    margin-top:12px;
-  }
-  .panel{
-    flex:1;
-    padding:14px;
-    border-radius:12px;
-    background:linear-gradient(180deg, #FFF, #FEFCF8);
-    border:1px solid rgba(38,70,83,0.04);
-  }
-  .panel.small{flex:0.45}
-  .display-area{
-    margin-top:14px;
-    padding:18px;
-    border-radius:12px;
-    background:linear-gradient(180deg,#FFF9F2,#FFF6EA);
-    min-height:120px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:20px;
-    line-height:1.8;
-    color:var(--text);
-    text-align:center;
-    box-shadow:0 6px 18px rgba(20,30,40,0.06);
-  }
-  .target{
-    font-weight:700;
-    letter-spacing:0.06em;
-  }
-  .target .word{
-    margin:0 10px;
-    padding:6px 10px;
-    border-radius:10px;
-    background:rgba(124,199,225,0.08);
-    display:inline-block;
-  }
-  .word.correct{
-    background:var(--success);
-    color:#064b2e;
-  }
-  .word.current{
-    background:var(--accent);
-    color:#fff;
-    transform:scale(1.02);
-  }
-  .typed{
-    margin-top:12px;
-    font-size:18px;
-    min-height:36px;
-    display:flex;
-    justify-content:center;
-    gap:8px;
-  }
-  .typed .ch{
-    padding:6px 8px;
-    border-radius:8px;
-    background:#FFF;
-    border:1px solid rgba(38,70,83,0.06);
-  }
-  .typed .ch.correct{
-    background:var(--success);
-    color:#064b2e;
-  }
-  .typed .ch.wrong{
-    background:#FFD6D6;
-    color:#7a1a1a;
-  }
-  .stats{
-    display:flex;
-    gap:10px;
-    justify-content:center;
-    margin-top:12px;
-  }
-  .stat{
-    background:#fff;
-    padding:8px 12px;
-    border-radius:10px;
-    box-shadow:0 6px 12px rgba(0,0,0,0.04);
-    min-width:110px;
-    text-align:center;
-  }
-  .smalltext{font-size:12px;color:var(--muted)}
-  .footer{
-    margin-top:16px;
-    display:flex;
-    gap:10px;
-    align-items:center;
-    justify-content:space-between;
-  }
-  .toggle{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-size:14px;
-  }
-  input[type="checkbox"]{
-    width:40px;height:22px;appearance:none;background:#eee;border-radius:12px;position:relative;cursor:pointer;
-  }
-  input[type="checkbox"]:after{
-    content:"";position:absolute;left:4px;top:3px;width:16px;height:16px;background:white;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.12);
-  }
-  input[type="checkbox"]:checked{background:var(--accent-dark);}
-  input[type="checkbox"]:checked:after{left:20px;}
-  .level{
-    padding:8px 12px;border-radius:10px;background:#fff;border:1px solid rgba(38,70,83,0.04);
-  }
+:root{
+  --bg:#fff9f0;
+  --card:#fff3dc;
+  --accent:#ff8bb3;
+  --accent-dark:#f06292;
+  --mint:#7cdedc;
+  --teal:#35b0ab;
+  --sky:#9dd6ff;
+  --text:#274059;
+  --muted:#6c7b86;
+  --success:#8dd46a;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#fffdf8,var(--bg));
+  font-family: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.app{
+  width:1000px;
+  max-width:100%;
+  background:var(--card);
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 18px 50px rgba(39,64,89,0.12);
+}
+.header{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+.header img{width:64px;height:64px;border-radius:12px}
+.title{margin:0;font-size:22px}
+.subtitle{margin:0;font-size:13px;color:var(--muted)}
+.controls{margin-left:auto;display:flex;gap:8px}
+.btn{
+  border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;
+  background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(0,0,0,0.12);
+}
+.btn.secondary{background:#fff;color:var(--text);box-shadow:none;border:1px solid rgba(39,64,89,0.06)}
+.layout{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-top:18px}
+.card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 10px 28px rgba(0,0,0,0.06)}
+.display{
+  min-height:160px;border-radius:12px;padding:18px;background:linear-gradient(180deg,#fff,#fff8f2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;
+}
+.word-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.word-pill{padding:8px 12px;border-radius:12px;background:#fff3f8;color:#c2185b;font-weight:700}
+.word-pill.current{background:var(--mint);color:#073c39;transform:scale(1.03)}
+.letter-row{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.letter-box{width:46px;height:52px;border-radius:12px;background:#f6fbff;border:2px solid rgba(39,64,89,0.06);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:var(--text)}
+.letter-box.current{border-color:var(--accent);box-shadow:0 0 0 6px rgba(255,139,179,0.08)}
+.letter-box.done{background:var(--success);color:#0b4b21;border-color:var(--success)}
 
-  /* modal */
-  .modal-backdrop{
-    position:fixed;inset:0;background:rgba(10,10,10,0.35);display:none;align-items:center;justify-content:center;
-  }
-  .modal{
-    width:520px;max-width:94%;background:white;border-radius:14px;padding:18px;box-shadow:0 20px 60px rgba(10,10,10,0.3);
-  }
-  .modal h2{margin-top:0}
-  .countdown{
-    font-size:40px;font-weight:800;color:var(--accent-dark);
-  }
-
-  /* small screens */
-  @media(max-width:720px){
-    .row{flex-direction:column}
-    .controls{margin-left:0}
-    .app{padding:14px}
-    header img{width:54px;height:54px}
-  }
+.step-list{display:flex;flex-direction:column;gap:10px}
+.step-item{display:flex;gap:10px;align-items:flex-start;background:#fff7fb;border-radius:12px;padding:10px}
+.step-number{width:34px;height:34px;border-radius:8px;background:var(--accent);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.finger-map{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.finger-card{background:#f3fcff;border-radius:10px;padding:10px;border:1px solid rgba(53,176,171,0.12)}
+.small{font-size:13px;color:var(--muted)}
+.stats{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.stat{background:#fff;border-radius:10px;padding:8px 12px;min-width:90px;text-align:center;box-shadow:0 8px 18px rgba(0,0,0,0.04)}
+#countdownBubble{position:absolute;top:14px;right:14px;background:#fff;border-radius:12px;padding:8px 12px;font-weight:800;color:#d84315;display:none}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center}
+.modal{background:#fff;padding:20px;border-radius:14px;width:420px;max-width:94%}
+.footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.switch{display:flex;align-items:center;gap:10px;background:#fff;padding:8px 12px;border-radius:12px;border:1px solid rgba(39,64,89,0.04)}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.controls{display:none}}
 </style>
 </head>
 <body>
-  <div class="app" role="application" aria-label="Typing Buddy">
-    <header>
-      <img src="assets/logo.png" alt="Typing Buddy logo">
-      <div>
-        <h1>Typing Buddy</h1>
-        <div class="smalltext">Practice touch-typing. Friendly, step-by-step lessons.</div>
-      </div>
-      <div class="controls">
-        <button class="btn" id="start-instruct">Instruction Mode</button>
-        <button class="btn secondary" id="start-exercise">Exercise Mode</button>
-      </div>
-    </header>
+<div class="app" role="application" aria-label="Typing Buddy">
+  <div class="header">
+    <img src="assets/logo.png" alt="logo">
+    <div>
+      <h1 class="title">Typing Buddy</h1>
+      <div class="subtitle">Learn touch-typing step by step. Start with F and J.</div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="btnInstruction">Instruction Mode</button>
+      <button class="btn secondary" id="btnExercise">Exercise Mode</button>
+    </div>
+  </div>
 
-    <div class="top-row">
-      <div class="modes" role="tablist">
-        <button class="mode-btn active" data-mode="instruct">Instruction</button>
-        <button class="mode-btn" data-mode="practice">Practice</button>
+  <div class="layout">
+    <div class="card">
+      <div class="display" id="display">
+        <div id="countdownBubble">5</div>
+        <div class="word-row" id="wordRow" aria-live="polite">
+          <div class="word-pill">Press Start</div>
+        </div>
+        <div class="letter-row" id="letterRow">
+          <div class="letter-box" style="visibility:hidden">A</div>
+        </div>
+        <div class="stats" id="stats" style="display:none">
+          <div class="stat"><div class="small">Time</div><div id="time">00:00</div></div>
+          <div class="stat"><div class="small">Score</div><div id="score">0</div></div>
+          <div class="stat"><div class="small">Accuracy</div><div id="acc">100%</div></div>
+        </div>
       </div>
 
-      <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
-        <div class="toggle" title="Timer on/off">
-          <label class="smalltext">Timer</label>
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+        <div class="switch">
+          <label class="small">Timer</label>
           <input type="checkbox" id="timerToggle" checked>
         </div>
-        <div class="level" id="levelDisplay">Level 1</div>
+        <button class="btn" id="startBtn">Start</button>
+        <button class="btn secondary" id="nextBtn">Next Step</button>
+        <button class="btn secondary" id="resetBtn">Reset</button>
+      </div>
+
+      <div class="footer">
+        <div class="small">Tip: Place index fingers on F and J. The little bumps help you find them.</div>
+        <div><strong id="levelLabel">Level 1</strong></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="row">
-        <div class="panel">
-          <div class="display-area" id="displayArea" aria-live="polite">
-            <div>
-              <div class="smalltext">Press Start to begin.</div>
-            </div>
-          </div>
+      <h3 style="margin:0 0 10px 0">Step-by-step lessons</h3>
+      <div class="step-list" id="steps">
+        <!-- Steps inserted by JS -->
+      </div>
 
-          <div class="typed" id="typedArea" aria-hidden="true"></div>
-
-          <div class="stats" id="statsBar" style="display:none">
-            <div class="stat">
-              <div class="smalltext">Time</div>
-              <div id="timeVal">00:00</div>
-            </div>
-            <div class="stat">
-              <div class="smalltext">Score</div>
-              <div id="scoreVal">0</div>
-            </div>
-            <div class="stat">
-              <div class="smalltext">Accuracy</div>
-              <div id="accVal">100%</div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="panel small">
-          <h3 style="margin:0 0 8px 0">How to use</h3>
-          <ol style="padding-left:16px">
-            <li>Choose Instruction or Exercise mode.</li>
-            <li>Place your fingers on the home row: A S D F for left, J K L ; for right.</li>
-            <li>Use each finger for its letters. Start slowly, then speed up.</li>
-            <li>In Instruction mode you can turn the timer off.</li>
-            <li>Only move to the next letter when you type the correct key.</li>
-            <li>Listen for the click sound for correct keys.</li>
-          </ol>
-
-          <div style="margin-top:12px;display:flex;gap:8px;">
-            <button class="btn" id="btnStart">Start</button>
-            <button class="btn secondary" id="btnReset">Reset</button>
-          </div>
-
-          <div style="margin-top:12px">
-            <div class="smalltext">Mode details</div>
-            <div style="font-size:14px;margin-top:6px">
-              Instruction mode = step-by-step with unlimited time option.<br>
-              Exercise mode = timed rounds, level progression, score and Game Over.
-            </div>
-          </div>
+      <div style="margin-top:12px">
+        <div class="small">Finger map</div>
+        <div class="finger-map" id="fingerMap">
+          <div class="finger-card"><strong>Left index</strong><div class="small">F R T G V</div></div>
+          <div class="finger-card"><strong>Right index</strong><div class="small">J H U Y N</div></div>
+          <div class="finger-card"><strong>Left middle</strong><div class="small">D E C</div></div>
+          <div class="finger-card"><strong>Right middle</strong><div class="small">K I ,</div></div>
         </div>
       </div>
 
-      <div class="footer">
-        <div class="smalltext">Tip: Keep your eyes on the screen. Type with the correct finger.</div>
-        <div>
-          <button class="btn secondary" id="nextLevelBtn">Next Level</button>
-        </div>
-      </div>
     </div>
   </div>
+</div>
 
-  <!-- Modal -->
-  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <h2 id="modalTitle">Game Over</h2>
-      <p id="modalText">Your results</p>
-      <div style="display:flex;gap:10px;margin-top:12px;justify-content:flex-end">
-        <button class="btn" id="modalRestart">Try Again</button>
-        <button class="btn secondary" id="modalClose">Close</button>
-      </div>
+<div class="modal-backdrop" id="modal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2 id="modalTitle">Round Finished</h2>
+    <p id="modalText">Your results will show here.</p>
+    <div style="text-align:right;margin-top:12px">
+      <button class="btn" id="modalClose">Close</button>
     </div>
   </div>
+</div>
 
 <script>
-/*
-  Typing Buddy - single file app
-  - Uses Web Audio API for low-latency click sound
-  - 200+ phrases included below (with added spaces between each word)
-*/
+/* Typing Buddy - Instruction steps, click sound using Mouseclicksound.mp3 (low latency) */
 
-// ====== Data ======
-const PHRASES = [
-"the  quick  brown  fox",
-"happy  sunny  day",
-"practice  makes  perfect",
-"home  row  finger  placement",
-"keep  your  eyes  on  the  screen",
-"type  with  correct  fingers",
-"slow  and  steady  wins  the  race",
-"learn  new  words  every  day",
-"she  sells  sea  shells",
-"my  keyboard  is  helping  me",
-"count  the  letters  and  type",
-"this  is  a  simple  test",
-"alpha  beta  gamma  delta",
-"japanese  students  study  daily",
-"morning  coffee  and  typing",
-"open  the  book  and  read",
-"the  cat  sat  on  the  mat",
-"fast  fingers  friendly  games",
-"training  for  speed  and  accuracy",
-"keep  calm  and  type  on",
-"learn  touch  typing  now",
-"practice  for  ten  minutes",
-"focus  on  each  correct  key",
-"good  posture  helps  speed",
-"look  at  the  screen  only",
-"remember  the  home  row",
-"left  hand  letter  group",
-"right  hand  letter  group",
-"middle  keys  are  for  index",
-"pinky  fingers  press  shift",
-"use  your  thumbs  for  space",
-"steady  rhythm  helps  flow",
-"hands  relaxed  and  ready",
-"small  steps  big  progress",
-"type  each  letter  correctly",
-"accuracy  before  speed",
-"timed  rounds  build  focus",
-"countdown  at  the  end",
-"finish  the  round  strong",
-"listen  for  the  click  sound",
-"no  rush  in  instruction  mode",
-"turn  off  timer  to  learn",
-"exercise  mode  is  timed",
-"levels  get  a  bit  harder",
-"score  shows  correct  keys",
-"accuracy  is  percent  correct",
-"mistakes  help  you  improve",
-"review  errors  after  the  round",
-"repeat  phrases  to  memorise",
-"mix  short  and  long  phrases",
-"try  to  type  without  looking",
-"slow  practice  builds  muscle",
-"focus  on  finger  placement",
-"thumb  for  space  bar",
-"index  finger  covers  two  keys",
-"middle  finger  two  keys  too",
-"ring  finger  is  a  helper",
-"pinky  finger  is  small  but  strong",
-"keep  wrists  low  and  relaxed",
-"use  your  chair  and  sit  straight",
-"breathe  calmly  while  typing",
-"practice  every  day  for  progress",
-"short  sessions  are  effective",
-"ten  to  twenty  minutes  daily",
-"warm  up  with  simple  words",
-"then  move  to  sentences",
-"always  check  your  posture",
-"description  of  finger  keys",
-"the  quick  fox  jumps  again",
-"typing  improves  language  skills",
-"this  sentence  has  many  words",
-"practice  this  phrase  twice",
-"smile  while  you  type",
-"steady  hands  steady  speed",
-"good  rhythm  feels  natural",
-"count  your  correct  keys",
-"practice  the  same  phrase",
-"then  increase  the  speed",
-"set  small  goals  each  day",
-"learning  is  more  fun  with  sound",
-"click  sound  helps  feedback",
-"no  delay  on  the  click  sound",
-"audio  plays  as  soon  as  key  correct",
-"the  project  is  simple  and  kind",
-"bright  colors  help  focus",
-"rounded  shapes  are  friendly",
-"kids  and  adults  both  enjoy",
-"type  slowly  and  be  patient",
-"repeat  until  it  feels  easy",
-"this  system  waits  for  correct  key",
-"you  cannot  skip  letters",
-"space  between  words  is  visible",
-"see  each  word  as  a  block",
-"practice  with  different  lengths",
-"short  words  help  accuracy",
-"long  sentences  help  stamina",
-"mix  words  for  better  skill",
-"progress  unlocks  new  levels",
-"each  level  changes  the  time",
-"score  rewards  precision",
-"accuracy  is  more  important",
-"focus  on  correct  finger  use",
-"remember  home  keys  and  positions",
-"do  not  look  at  the  keyboard",
-"keep  your  eyes  on  the  screen",
-"let  your  fingers  learn  the  keys",
-"slow  first  then  speed  later",
-"try  to  beat  your  best  score",
-"play  often  to  improve",
-"typing  helps  in  school  and  work",
-"keep  trying  and  you  will  improve",
-"this  is  a  helpful  exercise",
-"small  successes  build  confidence",
-"celebrate  improvements  each  week",
-"practice  with  friends  if  possible",
-"track  your  progress  in  levels",
-"each  level  is  a  short  challenge",
-"complete  a  round  to  advance",
-"end  of  round  shows  final  info",
-"countdown  warns  the  round  ending",
-"five  four  three  two  one",
-"be  ready  to  finish  strong",
-"last  seconds  need  calm  focus",
-"accuracy  often  falls  at  the  end",
-"breathe  slowly  for  the  final  seconds",
-"review  mistakes  after  each  round",
-"make  notes  of  letters  that  are  hard",
-"practice  those  letters  more  often",
-"finger  training  brings  speed",
-"keyboard  practice  makes  life  easier",
-"typing  without  looking  is  a  useful  skill",
-"start  with  small  words  then  longer",
-"this  app  helps  step  by  step",
-"follow  the  instruction  boxes",
-"use  the  timer  to  create  pressure",
-"turn  off  timer  in  instruction  mode",
-"sound  feedback  is  immediate",
-"no  audio  lag  for  clicks",
-"clear  and  friendly  user  interface",
-"big  letters  and  soft  shapes",
-"colors  chosen  for  calm  focus",
-"easy  lessons  for  beginners",
-"practice  makes  your  fingers  faster",
-"learn  one  new  key  at  a  time",
-"repeat  keys  with  exercises",
-"keep  your  hands  at  home  row",
-"index  fingers  move  to  nearby  keys",
-"try  to  keep  even  rhythm",
-"short  breaks  help  longer  practice",
-"stay  relaxed  during  practice",
-"reward  yourself  after  each  round",
-"celebrate  a  new  personal  best",
-"play  again  to  beat  your  score",
-"this  ends  the  long  list  of  phrases"
-];
-
-// ====== Settings & State ======
-let state = {
-  mode: 'instruct', // 'instruct' or 'practice'
-  running: false,
-  phrase: '',
-  words: [],
-  wordIndex: 0,
-  charIndex: 0,
-  startTime: null,
-  timeLeft: 60,
-  timerOn: true,
-  timerInterval: null,
-  score: 0,
-  correctCount: 0,
-  totalTyped: 0,
-  level: 1,
-  levelTime: 30
-};
-
-// Level configuration
-const LEVELS = [
-  {level:1, time:30, difficulty:'easy'}, // easy short phrases
-  {level:2, time:40, difficulty:'easy'},
-  {level:3, time:50, difficulty:'medium'},
-  {level:4, time:60, difficulty:'medium'},
-  {level:5, time:75, difficulty:'hard'}
-];
-
-// ====== Audio with Web Audio API (low latency) ======
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+// ===== Audio setup (Web Audio API) =====
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioContext = new AudioContext();
 let clickBuffer = null;
-
-// Load audio file into buffer
 fetch('assets/Mouseclicksound.mp3')
-  .then(r => r.arrayBuffer())
-  .then(buf => audioContext.decodeAudioData(buf))
-  .then(decoded => { clickBuffer = decoded; })
-  .catch(e => { console.warn('Audio load error', e); });
+  .then(r=>r.arrayBuffer())
+  .then(b=>audioContext.decodeAudioData(b))
+  .then(decoded=>{ clickBuffer = decoded; })
+  .catch(e=>{ console.warn('Audio load error', e); });
 
-// Play click sound instantly with no delay (use buffer source each time)
+// Play click sound immediately
 function playClick(){
   if(!clickBuffer) return;
   const src = audioContext.createBufferSource();
@@ -548,358 +181,492 @@ function playClick(){
   const gain = audioContext.createGain();
   gain.gain.value = 0.9;
   src.connect(gain).connect(audioContext.destination);
-  src.start(0); // start immediately
+  try { src.start(0); } catch(e) { /* ignore */ }
 }
 
-// ====== Helpers ======
-const qs = sel => document.querySelector(sel);
-const qsa = sel => Array.from(document.querySelectorAll(sel));
-function randChoice(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+// ===== UI elements =====
+const display = document.getElementById('display');
+const wordRow = document.getElementById('wordRow');
+const letterRow = document.getElementById('letterRow');
+const startBtn = document.getElementById('startBtn');
+const nextBtn = document.getElementById('nextBtn');
+const resetBtn = document.getElementById('resetBtn');
+const timerToggle = document.getElementById('timerToggle');
+const stats = document.getElementById('stats');
+const timeEl = document.getElementById('time');
+const scoreEl = document.getElementById('score');
+const accEl = document.getElementById('acc');
+const countdownBubble = document.getElementById('countdownBubble');
+const stepsList = document.getElementById('steps');
+const modal = document.getElementById('modal');
+const modalClose = document.getElementById('modalClose');
+const levelLabel = document.getElementById('levelLabel');
+const btnInstruction = document.getElementById('btnInstruction');
+const btnExercise = document.getElementById('btnExercise');
 
-function formatTime(sec){
-  if(sec < 0) sec = 0;
-  const mm = String(Math.floor(sec/60)).padStart(2,'0');
-  const ss = String(sec%60).padStart(2,'0');
-  return mm+':'+ss;
-}
+// ===== Lesson steps configuration =====
+// Each step teaches certain keys. We force only the target keys to be correct for that step.
+// Steps: F and J first, then add nearby letters.
+const LESSON_STEPS = [
+  { title: "Home keys: F and J", hint: "Place left index on F and right index on J. Press F or J.", keys: ['f','j'] },
+  { title: "Add D and K", hint: "Use middle fingers: press D (left) and K (right).", keys: ['d','k','f','j'] },
+  { title: "Add S and L", hint: "Use ring fingers: press S and L.", keys: ['s','l','d','k','f','j'] },
+  { title: "Add A and ;", hint: "Use pinky fingers: press A and ; (semicolon).", keys: ['a',';','s','l','d','k','f','j'] },
+  { title: "Add R and U", hint: "Add nearby keys R and U for index reach.", keys: ['r','u','a',';','s','l','d','k','f','j'] },
+  { title: "Type short words", hint: "Type small words built from learned keys.", keys: null }, // uses words
+  { title: "Combine and space", hint: "Type words and press Space when a word is correct.", keys: null }
+];
 
-// Pick phrase by level difficulty (simple heuristic)
-function pickPhraseForLevel(lv){
-  // level higher -> longer phrases
-  const candidate = PHRASES.filter(p => {
-    const len = p.split(' ').length;
-    if(lv <= 2) return len <= 5;
-    if(lv <= 4) return len <= 10;
-    return true;
+// Create step UI
+let currentStep = 0;
+function renderSteps(){
+  stepsList.innerHTML = '';
+  LESSON_STEPS.forEach((s,i)=>{
+    const el = document.createElement('div');
+    el.className = 'step-item';
+    el.innerHTML = `<div class="step-number">${i+1}</div><div><strong>${s.title}</strong><div class="small">${s.hint}</div></div>`;
+    if(i === currentStep) el.style.outline = '3px solid rgba(124,199,225,0.18)';
+    stepsList.appendChild(el);
   });
-  if(candidate.length === 0) return randChoice(PHRASES);
-  return randChoice(candidate);
+}
+renderSteps();
+
+// ===== Phrase bank (200+ entries) =====
+const PHRASES = (function build(){
+  const manual = [
+    "gentle  rain  taps  the  classroom  roof",
+    "bright  balloons  float  above  the  park",
+    "soft  music  guides  calm  breathing",
+    "tiny  robots  learn  helpful  tasks",
+    "reading  buddies  share  warm  stories",
+    "clever  foxes  race  through  the  valley",
+    "happy  lanterns  glow  during  festivals",
+    "quiet  owls  watch  the  silent  forest",
+    "friendly  turtles  swim  near  coral  beds",
+    "rosy  clouds  paint  the  early  sunrise",
+    "bookshelves  hold  worlds  of  wonder",
+    "young  hikers  follow  the  river  trail",
+    "colorful  pencils  wait  for  new  doodles",
+    "garden  herbs  make  the  soup  smell  bright",
+    "rainbow  paper  wraps  thoughtful  gifts",
+    "library  chairs  welcome  sleepy  students",
+    "morning  breeze  moves  the  bamboo  leaves",
+    "helpful  parrots  repeat  cheerful  words",
+    "silver  trains  glide  across  calm  bridges",
+    "kind  teachers  cheer  every  small  win",
+    "fresh  lemons  brighten  cool  summer  water",
+    "mango  smoothies  sweeten  study  breaks",
+    "fireflies  sparkle  over  the  wide  meadow",
+    "wooden  boats  rest  beside  cozy  cabins",
+    "snowy  penguins  wobble  across  the  ice",
+    "clever  coders  build  joyful  projects",
+    "potted  plants  stretch  toward  the  window",
+    "mini  rockets  soar  above  sandy  dunes",
+    "little  drummers  keep  a  steady  rhythm",
+    "soft  blankets  warm  chilly  evenings",
+    "playful  puppies  chase  fluttering  petals",
+    "teal  bicycles  roll  past  quiet  lakes",
+    "open  notebooks  invite  brave  ideas",
+    "purple  planets  shine  in  storybooks",
+    "brave  divers  explore  gentle  sea  caves",
+    "spring  dancers  twirl  across  the  stage",
+    "kind  friends  share  snacks  and  smiles",
+    "chess  players  plan  careful  moves",
+    "sun  hats  shade  curious  travelers",
+    "piano  keys  sparkle  under  bright  lights",
+    "little  painters  mix  bold  colors",
+    "paper  airplanes  glide  above  desks",
+    "soft  pillows  cushion  sleepy  heads",
+    "campfire  songs  echo  through  pine  trees",
+    "glowing  candles  light  the  dinner  table",
+    "peaceful  llamas  nap  by  the  stream",
+    "mild  breezes  rock  tiny  boats",
+    "fresh  waffles  smell  sweet  on  weekends",
+    "silver  kites  dance  across  blue  skies",
+    "gentle  horses  trot  along  sandy  paths",
+    "curious  readers  follow  secret  clues",
+    "color  math  games  brighten  homework  time",
+    "sticky  rice  cakes  make  holiday  treats",
+    "bright  stickers  cover  travel  journals",
+    "friendly  dragons  guard  library  doors",
+    "city  gardens  bloom  between  tall  towers",
+    "little  bakers  whisk  batter  with  care",
+    "purple  tulips  sway  beside  stone  steps",
+    "soft  whiskers  twitch  on  sleepy  kittens",
+    "golden  deserts  glow  under  noon  sun",
+    "blue  canoes  glide  on  mirror  lakes",
+    "comic  heroes  leap  between  panels",
+    "forest  campers  toast  fluffy  marshmallows",
+    "tiny  seedlings  sprout  after  spring  rain",
+    "bright  murals  cheer  the  subway  station",
+    "quiet  artists  sketch  cozy  rooftops",
+    "ocean  breezes  flutter  bright  flags",
+    "robot  helpers  carry  helpful  baskets",
+    "fresh  notebooks  mark  a  hopeful  start",
+    "lantern  parades  sparkle  down  main  street",
+    "music  teachers  clap  gentle  rhythms",
+    "orange  lanterns  glow  on  autumn  nights",
+    "friendly  bakers  share  warm  bread  slices",
+    "peach  smoothies  chill  the  picnic  table",
+    "cheerful  drivers  wave  at  every  corner",
+    "graceful  swans  glide  across  mirror  ponds",
+    "daring  climbers  reach  sunny  ledges",
+    "quiet  poets  write  lines  about  stardust",
+    "curvy  rainbows  arch  across  misty  hills",
+    "timid  fawns  hide  behind  tall  grasses",
+    "gleeful  skaters  trace  loops  on  ice",
+    "summer  campers  map  constellations  together",
+    "science  clubs  test  tiny  rockets",
+    "teddy  bears  wait  on  tidy  shelves",
+    "paper  crowns  sparkle  during  school  plays",
+    "jellyfish  lanterns  float  above  harbor  piers",
+    "gentle  nurses  wrap  bright  bandages",
+    "team  captains  whisper  steady  pep  talks",
+    "peppermint  cocoa  warms  late  night  readers",
+    "the  quick  brown  fox  jumps  over  the  lazy  dog",
+    "type  with  steady  fingers",
+    "keep  eyes  on  the  screen  not  keyboard",
+    "home  row  finger  placement  is  important",
+    "press  each  key  with  the  correct  finger",
+    "practice  for  ten  minutes  every  day",
+    "slow  practice  builds  muscle  memory",
+    "this  app  helps  you  learn  step  by  step",
+    "focus  on  accuracy  before  speed",
+    "small  wins  make  big  progress",
+    "soft  colors  and  friendly  shapes",
+    "listen  for  the  click  sound  on  correct  keys",
+    "no  delay  on  the  audio  feedback",
+    "start  with  f  and  j  home  keys",
+    "press  space  after  each  completed  word",
+    "do  not  rush  when  learning  new  keys",
+    "repeat  tough  letters  more  often",
+    "move  to  longer  sentences  for  stamina",
+    "track  your  accuracy  and  score"
+  ];
+
+  // add generated combinations to reach 200+ phrases
+  const subjects = ["calm  artists","brave  pilots","patient  gamers","kind  hikers","happy  surfers","curious  coders","gentle  dancers","bold  skaters","clever  writers","joyful  singers","quiet  gardeners","sunny  dreamers"];
+  const actions = ["practice  steady  typing","share  bright  ideas","plan  careful  steps","celebrate  small  wins","write  cozy  letters","solve  smart  riddles","build  playful  robots","guide  younger  friends","hum  simple  melodies","stretch  their  fingers"];
+  const places = ["during  early  mornings","before  lunchtime","under  glowing  lanterns","beside  peaceful  fountains","near  friendly  libraries","across  sunny  courtyards"];
+
+  const bank = manual.slice();
+  for(const s of subjects){
+    for(const a of actions){
+      for(const p of places){
+        bank.push(`${s}  ${a}  ${p}`);
+        if(bank.length >= 260) break;
+      }
+      if(bank.length >= 260) break;
+    }
+    if(bank.length >= 260) break;
+  }
+  // ensure uniqueness
+  return Array.from(new Set(bank));
+})();
+
+// ===== State =====
+let state = {
+  running: false,
+  mode: 'instruction', // 'instruction' or 'exercise'
+  stepIndex: 0,
+  phrase: '',
+  words: [],
+  wordIndex: 0,
+  charIndex: 0,
+  timerOn: true,
+  timeLeft: 0,
+  timerInterval: null,
+  score: 0,
+  totalTyped: 0,
+  correctTyped: 0,
+  level: 1
+};
+
+// ===== Helpers =====
+function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function pickPhrase(){
+  // For instruction steps 1-4, pick very short phrases built with taught keys
+  if(state.stepIndex <= 3){
+    const pool = ["fj","jf","ff","jj","fj fj","j f j","f j f"];
+    return rand(pool);
+  }
+  // else pick from full bank
+  return rand(PHRASES);
 }
 
-// ====== UI updates ======
+function splitWords(phrase){
+  // The PHRASES already use double spaces to show space between words.
+  // But we accept single spaces too.
+  return phrase.split(' ').filter(s=>s!== '');
+}
+
 function renderDisplay(){
-  const area = qs('#displayArea');
-  area.innerHTML = '';
+  // words
+  wordRow.innerHTML = '';
   if(!state.running){
-    area.innerHTML = '<div><div class="smalltext">Press Start to begin.</div></div>';
-    return;
+    const p = document.createElement('div'); p.className='word-pill'; p.textContent='Press Start';
+    wordRow.appendChild(p);
+  } else {
+    state.words.forEach((w,i)=>{
+      const d = document.createElement('div');
+      d.className = 'word-pill' + (i===state.wordIndex ? ' current' : (i<state.wordIndex ? ' done' : ''));
+      d.textContent = w;
+      wordRow.appendChild(d);
+    });
   }
-  const container = document.createElement('div');
-  // Show words with spacing and classes
-  state.words.forEach((w,wi) => {
-    const span = document.createElement('span');
-    span.className = 'word';
-    if(wi < state.wordIndex) span.classList.add('correct');
-    if(wi === state.wordIndex) span.classList.add('current');
-    span.textContent = w;
-    container.appendChild(span);
-  });
-  area.appendChild(container);
-
-  renderTyped();
-}
-
-function renderTyped(){
-  const t = qs('#typedArea');
-  t.innerHTML = '';
-  // Build characters for current word showing progress
-  const curWord = state.words[state.wordIndex] || '';
-  for(let i=0;i<curWord.length;i++){
-    const span = document.createElement('div');
-    span.className = 'ch';
-    const ch = curWord[i];
-    // Show visible letter but with spacing
-    span.textContent = ch;
-    if(i < state.charIndex) span.classList.add('correct');
-    t.appendChild(span);
+  // letters for current word
+  letterRow.innerHTML = '';
+  if(!state.running) return;
+  const cur = state.words[state.wordIndex] || '';
+  for(let i=0;i<cur.length;i++){
+    const box = document.createElement('div');
+    box.className = 'letter-box';
+    box.textContent = cur[i];
+    if(i < state.charIndex) box.classList.add('done');
+    if(i === state.charIndex) box.classList.add('current');
+    letterRow.appendChild(box);
   }
+  // space box
+  const sp = document.createElement('div');
+  sp.className = 'letter-box';
+  sp.textContent = '␣';
+  if(state.charIndex >= (state.words[state.wordIndex]||'').length) sp.classList.add('current');
+  letterRow.appendChild(sp);
 }
 
 function updateStats(){
-  qs('#statsBar').style.display = state.running ? 'flex' : 'none';
-  qs('#timeVal').textContent = formatTime(state.timeLeft);
-  qs('#scoreVal').textContent = state.score;
-  const acc = state.totalTyped === 0 ? 100 : Math.round((state.correctCount/state.totalTyped)*100);
-  qs('#accVal').textContent = acc + '%';
-  qs('#levelDisplay').textContent = 'Level ' + state.level;
+  stats.style.display = state.running ? 'flex' : 'none';
+  timeEl.textContent = isFinite(state.timeLeft) ? formatTime(state.timeLeft) : '∞';
+  scoreEl.textContent = state.score;
+  const acc = state.totalTyped === 0 ? 100 : Math.round((state.correctTyped/state.totalTyped)*100);
+  accEl.textContent = acc + '%';
+  levelLabel.textContent = 'Level ' + state.level;
 }
 
-// ====== Game control ======
-function startRound(mode){
-  // reset
-  state.mode = mode || state.mode;
-  state.running = true;
-  state.wordIndex = 0;
-  state.charIndex = 0;
-  state.score = 0;
-  state.correctCount = 0;
-  state.totalTyped = 0;
-
-  // set level config
-  const lvConfig = LEVELS[Math.min(state.level-1, LEVELS.length-1)];
-  state.levelTime = lvConfig ? lvConfig.time : 60;
-  state.timeLeft = state.timerOn ? state.levelTime : Infinity;
-  state.startTime = Date.now();
-
-  // pick phrase
-  state.phrase = pickPhraseForLevel(state.level);
-  // ensure single spaces become double spaced words (user asked space between words) - we already have extra spaces in PHRASES
-  state.words = state.phrase.split(' ');
-  // Remove empty items if double spaces cause extras
-  state.words = state.words.filter(w => w !== '');
-  renderDisplay();
-  updateStats();
-
-  // start timer if on
-  if(state.timerOn){
-    if(state.timerInterval) clearInterval(state.timerInterval);
-    state.timerInterval = setInterval(() => {
-      // if infinite, do nothing
-      if(!isFinite(state.timeLeft)) return;
-      state.timeLeft = Math.max(0, state.timeLeft - 1);
-      // when almost end and <=5, show countdown overlay inside display
-      if(state.timeLeft <= 5 && state.timeLeft > 0){
-        showCountdown(state.timeLeft);
-      } else {
-        hideCountdown();
-      }
-      updateStats();
-      if(state.timeLeft <= 0){
-        endRound();
-      }
-    }, 1000);
-  } else {
-    hideCountdown();
-  }
+function formatTime(s){
+  s = Math.max(0, Math.floor(s||0));
+  const mm = String(Math.floor(s/60)).padStart(2,'0');
+  const ss = String(s%60).padStart(2,'0');
+  return mm + ':' + ss;
 }
 
-function endRound(){
-  state.running = false;
-  if(state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null; }
-  hideCountdown();
-  showGameOver();
-  renderDisplay();
-  updateStats();
-}
-
-function resetAll(){
-  state.running = false;
-  state.wordIndex = 0;
-  state.charIndex = 0;
-  state.score = 0;
-  state.correctCount = 0;
-  state.totalTyped = 0;
-  if(state.timerInterval){ clearInterval(state.timerInterval); state.timerInterval = null; }
-  hideCountdown();
-  renderDisplay();
-  updateStats();
-}
-
-// ====== Countdown UI ======
-let countdownEl = null;
 function showCountdown(n){
-  const area = qs('#displayArea');
-  if(!countdownEl){
-    countdownEl = document.createElement('div');
-    countdownEl.style.position = 'absolute';
-    countdownEl.style.right = '24px';
-    countdownEl.style.top = '24px';
-    countdownEl.style.background = 'rgba(255,255,255,0.9)';
-    countdownEl.style.padding = '8px 12px';
-    countdownEl.style.borderRadius = '12px';
-    countdownEl.style.boxShadow = '0 6px 18px rgba(0,0,0,0.08)';
-    countdownEl.style.fontSize = '18px';
-    countdownEl.style.fontWeight = '700';
-    countdownEl.className = 'countdown';
-    area.style.position = 'relative';
-    area.appendChild(countdownEl);
-  }
-  countdownEl.textContent = n;
+  if(!n){ countdownBubble.style.display='none'; return; }
+  countdownBubble.textContent = n;
+  countdownBubble.style.display = 'block';
 }
-function hideCountdown(){
-  if(countdownEl && countdownEl.parentNode) countdownEl.parentNode.removeChild(countdownEl);
-  countdownEl = null;
-}
+function hideCountdown(){ countdownBubble.style.display='none' }
 
-// ====== Game Over modal ======
-function showGameOver(){
-  const mb = qs('#modalBackdrop');
-  const text = [];
-  text.push('You finished the round.');
-  text.push('Level: ' + state.level);
-  text.push('Score: ' + state.score);
-  const acc = state.totalTyped === 0 ? 100 : Math.round((state.correctCount/state.totalTyped)*100);
-  text.push('Accuracy: ' + acc + '%');
-  text.push('');
-  text.push('Tips: Keep your fingers on the home row. Practice slowly first, then increase speed.');
-  // Ensure modalText has 200+ words? The user asked for 200+ words/sentences in phrase list; modal can be short.
-  qs('#modalText').textContent = text.join(' ');
-  mb.style.display = 'flex';
-  mb.setAttribute('aria-hidden','false');
+// ===== Lesson control =====
+function startLesson(){
+  // resume audio if suspended
+  if(audioContext.state === 'suspended') audioContext.resume();
+  state.running = true;
+  state.score = 0;
+  state.totalTyped = 0;
+  state.correctTyped = 0;
+  state.wordIndex = 0;
+  state.charIndex = 0;
+  state.timerOn = timerToggle.checked;
+  const baseTime = 40 + (state.level-1)*10;
+  state.timeLeft = state.timerOn ? baseTime : Infinity;
+  stopTimer();
+  loadPhrase();
+  if(state.timerOn){
+    state.timerInterval = setInterval(()=>{
+      if(!state.running) return;
+      state.timeLeft--;
+      if(state.timeLeft <= 5 && state.timeLeft > 0) showCountdown(state.timeLeft);
+      else hideCountdown();
+      if(state.timeLeft <= 0){ state.timeLeft = 0; updateStats(); endLesson(); }
+      else updateStats();
+    },1000);
+  } else hideCountdown();
+  renderDisplay();
+  updateStats();
 }
 
-function hideGameOver(){
-  const mb = qs('#modalBackdrop');
-  mb.style.display = 'none';
-  mb.setAttribute('aria-hidden','true');
+function stopTimer(){
+  if(state.timerInterval){ clearInterval(state.timerInterval); state.timerInterval = null; }
 }
 
-// ====== Input handling ======
-window.addEventListener('keydown', (e) => {
-  // resume audio context on first user gesture if suspended
-  if(audioContext.state === 'suspended'){
-    audioContext.resume();
-  }
+function endLesson(){
+  state.running = false;
+  stopTimer();
+  hideCountdown();
+  renderDisplay();
+  updateStats();
+  const acc = state.totalTyped === 0 ? 100 : Math.round((state.correctTyped/state.totalTyped)*100);
+  // show modal
+  document.getElementById('modalTitle').textContent = 'Round Finished';
+  document.getElementById('modalText').textContent = `Level ${state.level}. Score ${state.score}. Accuracy ${acc}%`;
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden','false');
+}
 
-  // if not running, ignore except start keys
+function resetLesson(){
+  state.running = false;
+  state.wordIndex = 0; state.charIndex = 0; state.score = 0;
+  state.totalTyped = 0; state.correctTyped = 0;
+  stopTimer(); hideCountdown(); renderDisplay(); updateStats();
+}
+
+// ===== Load phrase and rendering =====
+function loadPhrase(){
+  const phrase = pickPhrase();
+  state.phrase = phrase;
+  // ensure words have single spaces between them for display; some phrases use double spaces already.
+  state.words = splitWords(phrase);
+  state.wordIndex = 0; state.charIndex = 0;
+  renderDisplay();
+}
+
+// ===== Key handling =====
+window.addEventListener('keydown', (e)=>{
+  // resume audio context on user gesture
+  if(audioContext.state === 'suspended') audioContext.resume();
+
   if(!state.running) return;
+  const key = e.key.toLowerCase();
+  // ignore non-character keys except space
+  if(['shift','alt','meta','control','capslock','tab','escape'].includes(key)) return;
 
-  // ignore special keys like Shift, Ctrl, Alt
-  if(e.key === 'Shift' || e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta') return;
-
-  const curWord = state.words[state.wordIndex] || '';
-  const expectedChar = curWord[state.charIndex] || ''; // may be undefined if word finished
-  // For space characters between words: we expect a space to move to next word.
-  // But our words array contains each visible word block (spaces are separators).
-  // So expectedChar will be a letter; users press space when word finished.
-  // We'll accept space when charIndex >= curWord.length to move to next word.
-
-  // total typed count
   state.totalTyped++;
 
-  // If character matches expected
-  if(e.key.length === 1 && e.key === expectedChar){
-    // correct letter
-    state.correctCount++;
-    state.charIndex++;
-    playClick();
+  const curWord = state.words[state.wordIndex] || '';
+  const expectedChar = state.charIndex < curWord.length ? curWord[state.charIndex] : ' ';
+  // For instruction steps, restrict allowed keys when step defines keys array
+  const step = LESSON_STEPS[state.stepIndex];
+  if(step && step.keys && step.keys.length){
+    // allowed keys are step.keys; accept space only if word complete
+    const allowed = step.keys.concat([' ']);
+    if(!allowed.includes(key) && !(key.length===1 && allowed.includes(key))){
+      // wrong key - flash
+      flashError();
+      return;
+    }
+  }
 
-    // If finished current word
-    if(state.charIndex >= curWord.length){
-      // move to next word automatically when user presses Space or immediately?
-      // The requirement: "It doesn’t go to the next letter until you type the right keys."
-      // We will require the user to press Space to move to next word, and ignore space until word done.
-      // But many students expect auto move when last char typed. We'll auto-move to next word after short 120ms to keep flow.
-      state.score += 10;
-      setTimeout(() => {
-        state.wordIndex++;
+  // If pressed correct char
+  if((key === expectedChar) || (expectedChar === ' ' && key === ' ')){
+    state.correctTyped++;
+    playClick();
+    state.score += 3;
+    if(expectedChar === ' '){
+      // user pressed space to move to next word
+      state.wordIndex++;
+      state.charIndex = 0;
+      if(state.wordIndex >= state.words.length){
+        // phrase finished
+        state.wordIndex = 0;
         state.charIndex = 0;
-        // if finished all words -> pick new phrase or end (for instruction mode, keep going)
-        if(state.wordIndex >= state.words.length){
-          // For practice mode, end when time runs out or when phrase ends?
-          // We'll pick a new phrase for continuous play.
-          state.phrase = pickPhraseForLevel(state.level);
-          state.words = state.phrase.split(' ').filter(w=>w!=='');
-          state.wordIndex = 0;
-          state.charIndex = 0;
+        if(state.stepIndex < LESSON_STEPS.length - 1){
+          // stay in lesson, let user press Next Step to advance
+          // give small xp
+          state.score += 10;
+        } else {
+          // load new phrase
+          loadPhrase();
         }
-        renderDisplay();
-        updateStats();
-      }, 120);
+      }
+      renderDisplay();
     } else {
-      renderTyped();
+      // correct letter
+      state.charIndex++;
+      // if word complete, we highlight space as current
+      if(state.charIndex >= curWord.length){
+        renderDisplay();
+      } else {
+        highlightLetters();
+      }
     }
   } else {
-    // wrong key
-    // Mark wrong visually by flashing a wrong box
-    flashWrongChar();
-    // no click sound
+    flashError();
   }
   updateStats();
 });
 
-// short visual feedback for wrong key
-function flashWrongChar(){
-  const t = qs('#typedArea');
-  if(!t) return;
-  t.style.transition = 'transform 0.08s';
-  t.style.transform = 'translateY(-3px)';
-  setTimeout(()=>{ t.style.transform = ''; }, 100);
+function highlightLetters(){
+  const boxes = letterRow.querySelectorAll('.letter-box');
+  boxes.forEach((box,i)=>{
+    const cur = state.words[state.wordIndex] || '';
+    box.classList.toggle('done', i < state.charIndex);
+    box.classList.toggle('current', i === state.charIndex);
+  });
 }
 
-// ====== Buttons & UI actions ======
-qs('#btnStart').addEventListener('click', ()=>{
-  state.timerOn = qs('#timerToggle').checked;
-  startRound(state.mode === 'instruct' ? 'instruct' : 'practice');
+function flashError(){
+  letterRow.classList.remove('error-flash');
+  void letterRow.offsetWidth;
+  letterRow.classList.add('error-flash');
+}
+
+// ===== Step navigation =====
+nextBtn.addEventListener('click', ()=>{
+  state.stepIndex = Math.min(state.stepIndex + 1, LESSON_STEPS.length - 1);
+  currentStep = state.stepIndex;
+  renderSteps();
+  // after step change, load a phrase appropriate to the step
+  loadPhrase();
 });
 
-qs('#start-instruct').addEventListener('click', ()=>{
-  state.mode = 'instruct';
-  qsa('.mode-btn').forEach(b=>b.classList.toggle('active', b.dataset.mode === 'instruct'));
-  state.timerOn = true;
-  qs('#timerToggle').checked = state.timerOn;
-  startRound('instruct');
-});
-
-qs('#start-exercise').addEventListener('click', ()=>{
-  state.mode = 'practice';
-  qsa('.mode-btn').forEach(b=>b.classList.toggle('active', b.dataset.mode === 'practice'));
-  state.timerOn = true;
-  qs('#timerToggle').checked = state.timerOn;
-  startRound('practice');
-});
-
-qsa('.mode-btn').forEach(b=>{
-  b.addEventListener('click', ()=> {
-    qsa('.mode-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    state.mode = b.dataset.mode;
-  });
-});
-
-qs('#btnReset').addEventListener('click', ()=> resetAll());
-qs('#nextLevelBtn').addEventListener('click', ()=>{
-  // advance level, up to max
-  state.level = Math.min(state.level + 1, LEVELS.length);
-  qs('#levelDisplay').textContent = 'Level ' + state.level;
-});
-
-qs('#timerToggle').addEventListener('change', (e)=>{
-  state.timerOn = e.target.checked;
-  // If in instruction mode and running, apply change
-  if(state.running && state.mode === 'instruct'){
-    if(state.timerOn){
-      state.timeLeft = state.levelTime;
-      if(state.timerInterval) clearInterval(state.timerInterval);
-      state.timerInterval = setInterval(() => {
-        if(!isFinite(state.timeLeft)) return;
-        state.timeLeft = Math.max(0, state.timeLeft - 1);
-        if(state.timeLeft <= 5 && state.timeLeft > 0){
-          showCountdown(state.timeLeft);
-        } else {
-          hideCountdown();
-        }
-        updateStats();
-        if(state.timeLeft <= 0){
-          endRound();
-        }
-      }, 1000);
-    } else {
-      if(state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null;}
-      state.timeLeft = Infinity;
-      hideCountdown();
-    }
-    updateStats();
-  }
-});
-
-// Modal actions
-qs('#modalClose').addEventListener('click', ()=>{
-  hideGameOver();
-});
-qs('#modalRestart').addEventListener('click', ()=>{
-  hideGameOver();
-  startRound(state.mode);
-});
-
-// click anywhere to start audio context (mobile)
-document.body.addEventListener('touchstart', ()=> {
+startBtn.addEventListener('click', ()=>{
+  // ensure audio context resumed on start
   if(audioContext.state === 'suspended') audioContext.resume();
-}, {passive:true});
+  // set stepIndex to 0 if not set
+  state.stepIndex = currentStep;
+  startLesson();
+});
 
-// Initialize display
+resetBtn.addEventListener('click', ()=> resetLesson());
+
+modalClose.addEventListener('click', ()=>{
+  modal.style.display = 'none';
+  modal.setAttribute('aria-hidden','true');
+});
+
+// Step click to jump
+stepsList.addEventListener('click', (e)=>{
+  const item = e.target.closest('.step-item');
+  if(!item) return;
+  const nodes = Array.from(stepsList.children);
+  const idx = nodes.indexOf(item);
+  if(idx >= 0){ state.stepIndex = idx; currentStep = idx; renderSteps(); loadPhrase(); }
+});
+
+// Instruction / Exercise mode buttons
+btnInstruction.addEventListener('click', ()=>{
+  state.mode = 'instruction';
+  state.stepIndex = 0;
+  currentStep = 0;
+  renderSteps();
+  loadPhrase();
+});
+btnExercise.addEventListener('click', ()=>{
+  state.mode = 'exercise';
+  state.stepIndex = LESSON_STEPS.length - 1; // last step uses full phrases
+  currentStep = state.stepIndex;
+  renderSteps();
+  loadPhrase();
+});
+
+// ===== Countdown visual for when time close to end =====
+function showCountdown(n){
+  countdownBubble.style.display = 'block';
+  countdownBubble.textContent = n;
+}
+function hideCountdown(){ countdownBubble.style.display = 'none' }
+
+// ===== Initialization =====
+loadPhrase();
 renderDisplay();
 updateStats();
+
+// Ensure audio starts on first pointer event (mobile)
+document.body.addEventListener('pointerdown', ()=> {
+  if(audioContext.state === 'suspended') audioContext.resume();
+}, { once:true });
 
 </script>
 </body>
